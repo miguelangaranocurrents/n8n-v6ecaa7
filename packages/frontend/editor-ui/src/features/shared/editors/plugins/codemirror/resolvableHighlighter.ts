@@ -101,14 +101,16 @@ export const coloringStateField = StateField.define<DecorationSet>({
 
 			for (const txEffect of transaction.effects) {
 				if (txEffect.is(coloringStateEffects.removeColorEffect)) {
+					// Keep every decoration except the one with exactly this range
 					colorings = colorings.update({
-						filter: (from, to) => txEffect.value.from !== from && txEffect.value.to !== to,
+						filter: (from, to) => txEffect.value.from !== from || txEffect.value.to !== to,
 					});
 				}
 
 				if (txEffect.is(coloringStateEffects.addColorEffect)) {
+					// Replace only a decoration with exactly this range
 					colorings = colorings.update({
-						filter: (from, to) => txEffect.value.from !== from && txEffect.value.to !== to,
+						filter: (from, to) => txEffect.value.from !== from || txEffect.value.to !== to,
 					});
 
 					const decoration = resolvableStateToDecoration[txEffect.value.state ?? 'pending'];
